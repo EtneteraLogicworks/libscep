@@ -15,7 +15,7 @@ include (CheckTypeSize)
 
 # Version
 set (libscep_VERSION_MAJOR 0)
-set (libscep_VERSION_MINOR 05)
+set (libscep_VERSION_MINOR 06)
 
 # Build scep-client cli by default
 option (BUILD_CLI "Build scep-client cli" ON)
