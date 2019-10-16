@@ -20,6 +20,12 @@ downstream_arch=amd64
 origname=${source_package}_${upstream_version}
 origtarball=$origname.orig.tar.gz
 
+if [ "$UID" == "0" ]; then
+    SUDO=
+else
+    SUDO=sudo
+fi
+
 pkgdeps="git-core dh-make cmake openssl pkg-config check liburiparser1 liburiparser-dev libcurl4-openssl-dev libssl-dev dh-make-perl"
 
 missingdeps=
@@ -36,8 +42,8 @@ done
 
 if [ -n "$missingdeps" ]; then
     echo "INFO: Installing missing dependencies: $missingdeps"
-    sudo apt-get update
-    sudo apt-get install -y $missingdeps
+    $SUDO apt-get update
+    $SUDO apt-get install -y $missingdeps
 fi
 
 # Confirm the dependencies were actually installed...
@@ -55,14 +61,14 @@ mkdir -p ~/build/$buildname
 (cd ~/build/$buildname && dpkg-buildpackage -us -uc)
 
 echo "INFO: Installing library package"
-sudo dpkg -i ~/build/${origname}-${downstream_version}_${downstream_arch}.deb
+$SUDO dpkg -i ~/build/${origname}-${downstream_version}_${downstream_arch}.deb
 
 (cd /vagrant/src/clients/perl/Crypt-LibSCEP && git archive --output=$HOME/build/Crypt-LibSCEP-${upstream_version}.tar.gz --prefix=Crypt-LibSCEP-${upstream_version}/ HEAD .)
 (cd ~/build && tar xzf Crypt-LibSCEP-${upstream_version}.tar.gz)
 (cd ~/build && dh-make-perl Crypt-LibSCEP-${upstream_version}/)
 (cd ~/build/Crypt-LibSCEP-${upstream_version} && dpkg-buildpackage -us -uc)
 echo "INFO: Installing Perl library package"
-sudo dpkg -i ~/build/libcrypt-libscep-perl_${upstream_version}-1_amd64.deb
+$SUDO dpkg -i ~/build/libcrypt-libscep-perl_${upstream_version}-1_amd64.deb
 
 echo "INFO: running our own tests"
 # Make sure we use the installed modules
