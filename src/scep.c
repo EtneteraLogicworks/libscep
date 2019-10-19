@@ -58,53 +58,100 @@ void scep_cleanup(SCEP *handle)
 
 SCEP_ERROR scep_create_oids(SCEP *handle)
 {
-#define OID_ERR(oid)									\
-	do {												\
-		ERR_print_errors(handle->configuration->log);   \
-		scep_log(handle, FATAL, "Could not create new OID \"" oid "\"");	\
-		return SCEPE_OPENSSL;								 \
-	} while(0)
-
 	if(_scep_oids == NULL) {
 		_scep_oids = malloc(sizeof(SCEP_OIDS));
 		if(!_scep_oids)
 			return SCEPE_MEMORY;
 		memset(_scep_oids, 0, sizeof(SCEP_OIDS));
 
-		_scep_oids->messageType = OBJ_create(
-			"2.16.840.1.113733.1.9.2", "messageType", "messageType");
-		if(_scep_oids->messageType == 0)
-			OID_ERR("messageType");
+		#if 0
+		    if (ERR_GET_REASON(ERR_peek_error()) != OBJ_R_OID_EXISTS) {
+		      ERR_print_errors(handle->configuration->log);
+		      scep_log(handle, FATAL, "Could not create new OID \"messageType\"");
+		      return SCEPE_OPENSSL;
+		    } else 
+		      ERR_clear_error();
+		  }
+#endif
+		
+		_scep_oids->messageType = OBJ_txt2nid("messageType");
+		if (_scep_oids->messageType == 0) {
+		  // OID does not exist (yet, create it)
+		  _scep_oids->messageType = OBJ_create("2.16.840.1.113733.1.9.2", "messageType", "messageType");
+		  if(_scep_oids->messageType == 0) {
+		      ERR_print_errors(handle->configuration->log);
+		      scep_log(handle, FATAL, "Could not create new OID \"messageType\"");
+		      return SCEPE_OPENSSL;
+		  }
+		}
 
-		_scep_oids->pkiStatus = OBJ_create(
-			"2.16.840.1.113733.1.9.3", "pkiStatus", "pkiStatus");
-		if(_scep_oids->pkiStatus == 0)
-			OID_ERR("pkiStatus");
+		_scep_oids->pkiStatus = OBJ_txt2nid("pkiStatus");
+		if (_scep_oids->pkiStatus == 0) {
+		  // OID does not exist (yet, create it)
+		  _scep_oids->pkiStatus = OBJ_create("2.16.840.1.113733.1.9.3", "pkiStatus", "pkiStatus");
+		  if(_scep_oids->pkiStatus == 0) {
+		    ERR_print_errors(handle->configuration->log);
+		    scep_log(handle, FATAL, "Could not create new OID \"pkiStatus\"");
+		    return SCEPE_OPENSSL;
+		  }
+		}
 
-		_scep_oids->failInfo = OBJ_create(
-			"2.16.840.1.113733.1.9.4", "failInfo", "failInfo");
-		if(_scep_oids->failInfo == 0)
-			OID_ERR("failInfo");
-
-		_scep_oids->senderNonce = OBJ_create(
+		_scep_oids->failInfo = OBJ_txt2nid("failInfo");
+		if (_scep_oids->failInfo == 0) {
+		  // OID does not exist (yet, create it)
+		  _scep_oids->failInfo = OBJ_create("2.16.840.1.113733.1.9.4", "failInfo", "failInfo");
+		  if(_scep_oids->failInfo == 0) {
+		    ERR_print_errors(handle->configuration->log);
+		    scep_log(handle, FATAL, "Could not create new OID \"failInfo\"");
+		    return SCEPE_OPENSSL;
+		  }
+		}
+		
+		_scep_oids->senderNonce = OBJ_txt2nid("senderNonce");
+		if (_scep_oids->senderNonce == 0) {
+		  // OID does not exist (yet, create it)
+		  _scep_oids->senderNonce = OBJ_create(
 			"2.16.840.1.113733.1.9.5", "senderNonce", "senderNonce");
-		if(_scep_oids->senderNonce == 0)
-			OID_ERR("senderNonce");
+		  if(_scep_oids->senderNonce == 0) {
+		    ERR_print_errors(handle->configuration->log);
+		    scep_log(handle, FATAL, "Could not create new OID \"senderNonce\"");
+		    return SCEPE_OPENSSL;
+		  }
+		}
 
-		_scep_oids->recipientNonce = OBJ_create(
-			"2.16.840.1.113733.1.9.6", "recipientNonce", "recipientNonce");
-		if(_scep_oids->recipientNonce == 0)
-			OID_ERR("recipientNonce");
+		_scep_oids->recipientNonce = OBJ_txt2nid("recipientNonce");
+		if (_scep_oids->recipientNonce == 0) {
+		  // OID does not exist (yet, create it)
+		  _scep_oids->recipientNonce = OBJ_create("2.16.840.1.113733.1.9.6", "recipientNonce", "recipientNonce");
+		  if(_scep_oids->recipientNonce == 0) {
+		    ERR_print_errors(handle->configuration->log);
+		    scep_log(handle, FATAL, "Could not create new OID \"recipientNonce\"");
+		    return SCEPE_OPENSSL;
+		  }
+		}
 
-		_scep_oids->transId = OBJ_create(
-			"2.16.840.1.113733.1.9.7", "transId", "transId");
-		if(_scep_oids->transId == 0)
-			OID_ERR("transId");
+		_scep_oids->transId = OBJ_txt2nid("transId");
+		if (_scep_oids->transId == 0) {
+		  // OID does not exist (yet, create it)
+		  _scep_oids->transId = OBJ_create("2.16.840.1.113733.1.9.7", "transId", "transId");
+		  if(_scep_oids->transId == 0) {
+		    ERR_print_errors(handle->configuration->log);
+		    scep_log(handle, FATAL, "Could not create new OID \"transId\"");
+		    return SCEPE_OPENSSL;
+		  }
+		}
 
-		_scep_oids->extensionReq = OBJ_create(
-			"2.16.840.1.113733.1.9.8", "extensionReq", "extensionReq");
-		if(_scep_oids->extensionReq == 0)
-			OID_ERR("extensionReq");
+		_scep_oids->extensionReq = OBJ_txt2nid("extensionReq");
+		if (_scep_oids->extensionReq == 0) {
+		  // OID does not exist (yet, create it)
+		  _scep_oids->extensionReq = OBJ_create(
+							"2.16.840.1.113733.1.9.8", "extensionReq", "extensionReq");
+		  if(_scep_oids->extensionReq == 0) {
+		    ERR_print_errors(handle->configuration->log);
+		    scep_log(handle, FATAL, "Could not create new OID \"extensionReq\"");
+		    return SCEPE_OPENSSL;
+		  }
+		}
 	}
 	handle->oids = _scep_oids;
 	return SCEPE_OK;

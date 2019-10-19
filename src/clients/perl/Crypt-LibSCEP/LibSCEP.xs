@@ -24,6 +24,7 @@ cleanup_config(Conf *config) {
     }
 
     free(config);
+    config = NULL;
 }
 
 /*
