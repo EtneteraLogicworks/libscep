@@ -1,3 +1,9 @@
+libscep (0.07-1) unstable; urgency=low
+
+  * repackage
+
+ -- Scott Hardin <shardin@whiterabbitsecurity.com>  Sun, 20 Oct 2019 12:00:00 +0000
+
 libscep (0.06-1) unstable; urgency=low
 
   * repackage
