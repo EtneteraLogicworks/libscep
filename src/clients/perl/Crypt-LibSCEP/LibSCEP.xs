@@ -83,7 +83,7 @@ cleanup_and_croak:
 
     if (strlen(error) == 0)
         OPENSSL_strlcpy(error, "*** Internal error: no error message", 4096);
-    Perl_croak(aTHX_ error);
+    Perl_croak(aTHX_ "%s", error);
 }
 
 
