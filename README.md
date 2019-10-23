@@ -45,8 +45,8 @@ Building Debian Package
 The Debian packaging is done via Vagrant. To create the libscep and Perl
 library packages, run the following:
 
-    vagrant up
-    vagrant ssh --command /vagrant/package/make-deb.sh
+    vagrant up debian
+    vagrant ssh --command /vagrant/package/make-deb.sh debian
 
 The resulting debian package files will be copied to the current directory.
 

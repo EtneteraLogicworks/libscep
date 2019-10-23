@@ -7,14 +7,17 @@
 #   vagrant init debian/jessie64
 #   vagrant ssh --command /vagrant/package/make-deb.sh
 
+set -x
 set -e
 
 pkgname=libscep
-upstreamver=0.3
-buildname=$pkgname-$upstreamver
+version_major=$(perl -ne 'm{^set .libscep_VERSION_MAJOR (\d+)} && print $1' /vagrant/CMakeLists.txt)
+version_minor=$(perl -ne 'm{^set .libscep_VERSION_MINOR (\d+)} && print $1' /vagrant/CMakeLists.txt)
+    
 
 source_package=$pkgname
-upstream_version=0.3
+upstream_version=$version_major.$version_minor
+buildname=$pkgname-$upstream_version
 downstream_version=1
 downstream_arch=amd64
 origname=${source_package}_${upstream_version}
