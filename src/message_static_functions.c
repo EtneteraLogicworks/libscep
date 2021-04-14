@@ -193,6 +193,8 @@ static SCEP_ERROR handle_encrypted_content(
         EVP_PKEY *dec_key)
 {
     SCEP_ERROR error = SCEPE_OK;
+    CMS_ContentInfo *cmsEnv = NULL;
+    BIO *conversion = NULL;
     BIO *decData = NULL;
     int ias_data_size;
     unsigned char *ias_data = NULL;
@@ -217,7 +219,16 @@ static SCEP_ERROR handle_encrypted_content(
     if(!decData)
         OSSL_ERR("Failed to allocate space for decryption BIO");
 
-    if(!PKCS7_decrypt(p7env, dec_key, dec_cert, decData, 0))
+    /* To achieve the ability to decrypt the payloads encrypted using RSA together with
+     * OAEP padding we were forced to switch from PKCS7_decrypt method to CMS_decrypt.
+     * CMS_decrypt requires input to be in CMS_ContentInfo format so conversion from
+     * PKCS7 structure is necessary.
+    */
+    conversion = BIO_new(BIO_s_mem());
+    i2d_PKCS7_bio(conversion, p7env);
+    cmsEnv = d2i_CMS_bio(conversion, NULL);
+
+    if(!CMS_decrypt(cmsEnv, dec_key, dec_cert, NULL, decData, 0))
         OSSL_ERR("decryption failed");
 
     switch(data->messageType) {
@@ -293,5 +304,7 @@ static SCEP_ERROR handle_encrypted_content(
 finally:
     if(decData)
         BIO_free(decData);
+    if(conversion)
+        BIO_free(conversion);
     return error;
 }
