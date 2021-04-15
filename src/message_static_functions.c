@@ -225,8 +225,8 @@ static SCEP_ERROR handle_encrypted_content(
      * PKCS7 structure is necessary.
     */
     conversion = BIO_new(BIO_s_mem());
-    PEM_write_bio_PKCS7(conversion, p7env);
-    cmsEnv = PEM_read_bio_CMS(conversion, NULL, NULL, NULL);
+    i2d_PKCS7_bio(conversion, p7env);
+    cmsEnv = d2i_CMS_bio(conversion, NULL);
 
     if(!CMS_decrypt(cmsEnv, dec_key, dec_cert, NULL, decData, 0))
         OSSL_ERR("decryption failed");
